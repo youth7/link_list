@@ -1,38 +1,54 @@
+use std::rc::Rc;
+
 mod link_list_v1;
-mod test;
-use link_list_v1::List;
+mod link_list_v2;
+
+// use std::rc::Rc;
+
+// use link_list_v1::List;
 
 fn main() {
-    let mut list = List::new();
+    test_v1();
+    test_v2();
+}
+
+fn test_v1() {
+    let mut list = link_list_v1::List::new();
     for i in 1..=5 {
         list.push(i);
     }
-    
-    // assert_eq!(list.pop(), Some(5));
-    // assert_eq!(list.pop(), Some(4));
-    // assert_eq!(list.pop(), Some(3));
-    // assert_eq!(list.pop(), Some(2));
-    // assert_eq!(list.pop(), Some(1));
-    // assert_eq!(list.pop(), None);
-    // assert_eq!(list.pop(), None);
 
-    for i in list.iter_mut(){
-        *i = *i - 66;
-        println!("mut iterator {:?}", i)
+    for (i, v) in list.iter_mut().enumerate() {
+        *v = *v - 66;
+        assert_eq!(*v, 5 - (i as i32) - 66);
     }
 
-    for i in list.iter(){
-        println!("ref iterator {:?}", i)
+    for (i, v) in list.iter().enumerate() {
+        assert_eq!(*v, 5 - (i as i32) - 66);
     }
 
+    println!("{:?}", list.get_head());
 
+    for (i, v) in list.into_iter().enumerate() {
+        assert_eq!(v, 5 - (i as i32) - 66);
+    }
+}
 
-    // println!("{:?}", list);
+fn test_v2() {
+    let mut list = link_list_v2::List::new();
+    list = list.prepend(1).prepend(2).prepend(3);
+    println!("{:?}", list);
 
-
-    for i in list.into_iter(){
-        println!("non ref iterator {:?}", i)
+    for i in list.iter() {
+        println!("{:?}", i);
     }
 
-    
+    list = list.tail();
+    println!("{:?}", list);
+    list = list.tail();
+    println!("{:?}", list);
+    list = list.tail();
+    println!("{:?}", list);
+    list = list.tail();
+    println!("{:?}", list);
 }
