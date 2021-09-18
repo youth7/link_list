@@ -25,7 +25,15 @@ impl<T> Node<T> {
     }
 }
 
+pub struct ListRefIterator<'a, T>(Option<Ref<'a, Node<T>>>);
+
+
 impl<T> List<T> {
+
+    pub fn iter(&self) -> ListRefIterator<T>{
+        ListRefIterator(self.head.as_ref().map(|head| head.borrow()))
+    }
+
     pub fn new() -> List<T> {
         List {
             head: None,
@@ -127,6 +135,9 @@ impl<T> List<T> {
             })
         })
     }
+
+
+
 
 
 }
