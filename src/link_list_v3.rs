@@ -25,14 +25,9 @@ impl<T> Node<T> {
     }
 }
 
-pub struct ListRefIterator<'a, T>(Option<Ref<'a, Node<T>>>);
-
 
 impl<T> List<T> {
 
-    pub fn iter(&self) -> ListRefIterator<T>{
-        ListRefIterator(self.head.as_ref().map(|head| head.borrow()))
-    }
 
     pub fn new() -> List<T> {
         List {
@@ -58,17 +53,16 @@ impl<T> List<T> {
         }
     }
 
-
     pub fn pop_front(&mut self) -> Option<T> {
         // println!("pop count {}", Rc::strong_count(&self.head.));
         self.head.take().map(|old_head| {
             // println!("pop count {}", Rc::strong_count(&old_head));
-            match old_head.borrow_mut().next.take(){
+            match old_head.borrow_mut().next.take() {
                 None => {
                     self.tail = None;
                     // println!("pop count {}", Rc::strong_count(&old_head));
-                },
-                Some(new_head)=>{
+                }
+                Some(new_head) => {
                     new_head.borrow_mut().pre = None;
                     self.head = Some(new_head);
                 }
@@ -78,15 +72,11 @@ impl<T> List<T> {
         })
     }
 
-    pub fn peek_front(&self) ->Option<Ref<T>>{
-        self.head.as_ref().map(|node|{
-            Ref::map(node.borrow(), |node|{
-                &node.value
-            })
-        })
+    pub fn peek_front(&self) -> Option<Ref<T>> {
+        self.head
+            .as_ref()
+            .map(|node| Ref::map(node.borrow(), |node| &node.value))
     }
-
-
 
     pub fn push_back(&mut self, value: T) {
         let new_node = Rc::new(RefCell::new(Node::new(value)));
@@ -103,41 +93,31 @@ impl<T> List<T> {
         }
     }
 
-    
     pub fn pop_back(&mut self) -> Option<T> {
-        self.tail.take().map(|old_tail|{
-            let new_tail =     old_tail.borrow_mut().pre.take();
-            match new_tail{
-                None=> {
-                    self.head = None;   
-                },
-                Some(new_tail)=>{
+        self.tail.take().map(|old_tail| {
+            let new_tail = old_tail.borrow_mut().pre.take();
+            match new_tail {
+                None => {
+                    self.head = None;
+                }
+                Some(new_tail) => {
                     new_tail.borrow_mut().next = None;
-                    self.tail =Some(Rc::clone(&new_tail));
+                    self.tail = Some(Rc::clone(&new_tail));
                 }
             }
             Rc::try_unwrap(old_tail).ok().unwrap().into_inner().value
         })
     }
 
-    pub fn peek_back(&self)-> Option<Ref<T>>{
-        self.tail.as_ref().map(|node|{
-            Ref::map(node.borrow(), |node|{
-                &node.value
-            })
-        })
+    pub fn peek_back(&self) -> Option<Ref<T>> {
+        self.tail
+            .as_ref()
+            .map(|node| Ref::map(node.borrow(), |node| &node.value))
     }
 
-    pub fn peek_back_mut(&mut self)->Option<RefMut<T>>{
-        self.head.as_ref().map(|node|{
-            RefMut::map(node.borrow_mut(), |node|{
-                &mut node.value
-            })
-        })
+    pub fn peek_back_mut(&mut self) -> Option<RefMut<T>> {
+        self.head
+            .as_ref()
+            .map(|node| RefMut::map(node.borrow_mut(), |node| &mut node.value))
     }
-
-
-
-
-
 }

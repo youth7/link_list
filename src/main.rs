@@ -3,6 +3,7 @@ use std::{cell::{RefCell, RefMut}, rc::Rc};
 mod link_list_v1;
 mod link_list_v2;
 mod link_list_v3;
+mod link_list_v4;
 // use std::rc::Rc;
 
 // use link_list_v1::List;
@@ -10,6 +11,8 @@ mod link_list_v3;
 fn main() {
     // test_v1();
     // test_v2();
+    let v:Vec<String>= Vec::new();
+    let b = Rc::new(v);
     test_v3();
 }
 
